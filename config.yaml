@@ -1,0 +1,20 @@
+baseURL: https://kida.info
+languageCode: en-us
+title: Bartłomiej Kida
+theme: ["PaperMod"]
+author: "Bartłomiej Kida"
+params:
+  profileMode:
+    enabled: true
+    defaultTheme: "light"
+    title: "Bartłomiej Kida"
+    subtitle: "..."
+  socialIcons:
+    - name: "GitHub"
+      url: "https://github.com/bartlomiejkida"
+    - name: "Gitlab"
+      url: "https://gitlab.com/bartlomiejkida"
+    - name: "Linkedin"
+      url: "https://www.linkedin.com/in/bartlomiejkida/"
+    - name: "Mastodon"
+      url: "https://mastodon.social/@bkida"
