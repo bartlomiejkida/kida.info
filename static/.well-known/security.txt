@@ -1,0 +1,4 @@
+Contact: mailto: bartlomiej@kida.info
+Encryption: https://kida.info/.well-known/BFB3991C839DC9D3C814DA8BE64F8DEAC8FBA873.pgp
+Preferred_languages: en, pl
+Expires: 2030-01-31T23:00:00.000Z
