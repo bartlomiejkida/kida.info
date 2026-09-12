@@ -3,6 +3,13 @@ languageCode: en-us
 title: Bartłomiej Kida
 theme: ["PaperMod"]
 author: "Bartłomiej Kida"
+# Deny all external tools at build time (workaround for CVE-2026-89259; also
+# defense in depth for CVE-2026-89258). An empty list rejects every external
+# exec; this site does not use any (no hugo pipe/external tooling).
+# If a tool is ever needed, allow it here explicitly, e.g. allow: ['^git$'].
+security:
+  exec:
+    allow: []
 params:
   profileMode:
     enabled: true

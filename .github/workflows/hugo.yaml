@@ -32,11 +32,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HUGO_VERSION: 0.142.0
+      # >= 0.165.0: fixes CVE-2026-89258 (symlink confinement bypass) and
+      # CVE-2026-89259 (tailwindcss in default security.exec.allow).
+      # Requires PaperMod >= the refreshed-template-system fix (submodule pin).
+      HUGO_VERSION: 0.166.0
+      # sha256 of hugo_extended_${HUGO_VERSION}_linux-amd64.deb from
+      # https://github.com/gohugoio/hugo/releases — re-verify when bumping HUGO_VERSION.
+      HUGO_DEB_SHA256: 52b06555f739b1a08e04f5c31296e9bdf166a012e9b7e3137befc889dbc24db8 # pragma: allowlist secret
     steps:
       - name: Install Hugo CLI
         run: |
           wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && echo "${HUGO_DEB_SHA256}  ${{ runner.temp }}/hugo.deb" | sha256sum --check \
           && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Install Dart Sass
         run: sudo snap install dart-sass
@@ -45,6 +52,16 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+      - name: Reject symlinks (CVE-2026-89258)
+        # Hugo resource lookups (resources.Get, os.ReadFile) follow symlinks;
+        # a symlink planted in the checkout (e.g. in themes/) could leak files
+        # outside the project into the generated site. pre-commit's
+        # check-symlinks is bypassable (--no-verify), so enforce it in CI.
+        run: |
+          if find . -path ./.git -prune -o -type l -print | grep -q .; then
+            echo "::error::Symbolic links present in the checkout — refusing to build (CVE-2026-89258)."
+            exit 1
+          fi
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
